@@ -14,7 +14,7 @@ population health. [medRxiv 2021.05.04.21256647](https://doi.org/10.1101/2021.05
 
     ```
     git clone https://github.com/flaviagiammarino/stanford-tide-dashboard
-    cd /stanford-tide-dashboard
+    cd stanford-tide-dashboard
     ```
 
 2. Install the requirements.
