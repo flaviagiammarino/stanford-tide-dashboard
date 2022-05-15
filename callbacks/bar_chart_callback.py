@@ -45,7 +45,6 @@ time_below_54_greater_than_1, click_data, figure, style):
     style: dict.
         Bar chart style dictionary.
     '''
-
     # Find out which input has changed.
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -112,5 +111,4 @@ time_below_54_greater_than_1, click_data, figure, style):
         return figure, style
 
     else:
-
         raise dash.exceptions.PreventUpdate

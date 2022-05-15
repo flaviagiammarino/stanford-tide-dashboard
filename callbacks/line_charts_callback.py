@@ -7,7 +7,6 @@ from plots.line_chart import line_chart
 from plots.timeline_chart import timeline_chart
 
 def calculate_statistics(df):
-
     '''
     Calculate the descriptive statistics displayed in the table.
 
@@ -45,7 +44,6 @@ def calculate_statistics(df):
     avg_worn: str.
         Average percentage time that the device has been worn.
     '''
-
     # Copy the data frame.
     df = df.copy()
 
@@ -83,7 +81,6 @@ def calculate_statistics(df):
 
 
 def update_timeline(data):
-
     '''
     Generate the line charts of the median by day and hour.
 
@@ -97,7 +94,6 @@ def update_timeline(data):
     figures: list.
         List of 21 figure dictionaries, one for each day in the last 3 weeks.
     '''
-
     # Copy the data frame.
     data = data.copy()
 
@@ -128,7 +124,6 @@ def update_timeline(data):
 
 def update_line_charts(data, population, time_worn_less_than_75, time_in_range_less_than_65, time_below_70_greater_than_4,
 time_below_54_greater_than_1, click_data):
-
     '''
     Update the table and all the line charts.
 
@@ -164,7 +159,6 @@ time_below_54_greater_than_1, click_data):
     - The figure with the line chart of the percentiles by hour.
     - The 21 figures with the line chart of the median by hour for each day in the last 3 weeks.
     '''
-
     # Find out which input has changed.
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -218,5 +212,4 @@ time_below_54_greater_than_1, click_data):
         return table_title + table_data + large_figure_title + large_figure + small_figures
 
     else:
-
         raise dash.exceptions.PreventUpdate

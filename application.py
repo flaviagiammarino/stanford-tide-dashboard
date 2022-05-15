@@ -68,7 +68,7 @@ app.layout = html.Div(
     ]
 )
 
-# App callbacks
+# App callbacks.
 @app.callback(
     [Output('bar-chart', 'figure'),
      Output('bar-chart', 'style')],

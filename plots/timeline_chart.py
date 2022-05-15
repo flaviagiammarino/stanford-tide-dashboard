@@ -6,7 +6,7 @@ def timeline_chart(df):
     
     Parameters:
     ----------------------------------
-    output: pd.DataFrame.
+    df: pd.DataFrame.
         Data frame with patients blood glucose time series observed at 5 minutes frequency
         including patients ranks and patients priority groups.
         The data frame contains the following columns:
@@ -30,7 +30,6 @@ def timeline_chart(df):
     ----------------------------------
     go.Figure.
     '''
-    
     # Define the figure layout.
     layout = dict(
         title=dict(

@@ -18,7 +18,7 @@ def simulate_patients(start, num, populations, seed=42):
     num: int.
         Number of patients.
     
-    populations:
+    populations: list of str.
         Patients populations.
     
     seed: int.
@@ -189,7 +189,6 @@ def add_missing_values(x):
     '''
     Simulate missing values in the blood glucose measurements.
     '''
-    
     # Simulate the start times of the missing sequences.
     times = np.random.choice(a=x.index, size=np.random.randint(low=0, high=20))
     
