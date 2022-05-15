@@ -1,0 +1,68 @@
+/* General */
+body {
+    font-family: Arial;
+    font-size: 0.7vw;
+    color: #55514b;
+    width: 90vw;
+    height: auto;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    margin: 0vw 0vw 0vw 5vw;
+    padding: 0;
+}
+
+html {
+    font-family: Arial;
+    font-size: 0.7vw;
+    color: #55514b;
+    overflow-x: hidden;
+}
+
+/* Filters */
+.checklist-title{
+    font-weight: 600;
+}
+
+.checklist-input{
+    height: 0.65vw !important;
+    width: 0.65vw !important;
+}
+
+.checklist-label{
+    color: #55514b;
+}
+
+.checklist-container{
+    display: inline-block;
+    vertical-align: top;
+    width: 19%;
+    margin-left: 1%;
+}
+
+/* Table */
+.table-cell{
+    width: 9.99vw;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+
+/* Timeline */
+.timeline-header{
+    width: 12.8vw;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    background-color: rgba(134, 180, 169, 0.25);
+    font-weight: 600;
+    line-height: 2.5vw;
+    box-sizing: border-box;
+}
+
+.timeline-cell{
+    width: 12.8vw;
+    height: 7.5vw;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+}
