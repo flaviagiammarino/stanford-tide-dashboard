@@ -26,7 +26,7 @@ population health. [medRxiv 2021.05.04.21256647](https://doi.org/10.1101/2021.05
 3. Run the app.
 
     ```
-    python application.py
+    python3 application.py
     ```
 
 ## Deploying the app on the web with AWS Elastic Beanstalk:
