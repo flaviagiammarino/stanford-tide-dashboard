@@ -101,7 +101,7 @@ def update_timeline(data):
     data['ts'] = pd.to_datetime(data['ts'])
 
     # Extract the last 21 days.
-    end_date = (datetime.datetime.now() + pd.offsets.Week(weekday=6)).replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = (data['ts'].max() + pd.offsets.Week(weekday=6)).replace(hour=0, minute=0, second=0, microsecond=0)
     start_date = (end_date - datetime.timedelta(days=20)).replace(hour=0, minute=0, second=0, microsecond=0)
     days = pd.date_range(start=start_date, end=end_date, freq='D').day
 
