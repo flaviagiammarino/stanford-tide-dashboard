@@ -38,7 +38,7 @@ app.layout = html.Div(
         # Filters.
         html.Div(
             children=filters_layout(data),
-            style={'margin': '0.5vw 0vw 0.5vw 0vw'}
+            style={'margin': '1.5vw 0vw 0.5vw 0vw'}
         ),
 
         # Bar chart.
@@ -62,7 +62,7 @@ app.layout = html.Div(
         # Timeline.
         html.Div(
             children=timeline_layout,
-            style={'margin': '1vw 0vw 1vw 0vw'}
+            style={'margin': '1vw 0vw 1.5vw 0vw'}
         ),
 
     ]
