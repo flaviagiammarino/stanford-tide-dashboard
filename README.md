@@ -1,4 +1,4 @@
-# Stanford TIDE
+# Stanford TIDE Dashboard
 
 Continuous glucose monitoring dashboard for algorithm-enabled prioritizations of patients with Type 1 diabetes 
 introduced in Ferstad, J.O., Vallon, J.J., Jun, D., Gu, A., Vitko, A., Morales, D.P., Leverenz, J., Lee, M.Y., 
