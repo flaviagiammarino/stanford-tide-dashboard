@@ -27,8 +27,6 @@ and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-w
 
 ![population-view-screenshot](screenshots/population_view.png)
 
-<br>
-
 ### Patient View
 
 ![patient-view-screenshot](screenshots/patient_view.png)
@@ -71,4 +69,3 @@ Prospective Evaluation in Clinical Practice. *JMIR diabetes*, 7(2), p.e27284.
 [3] Scheinker, D., Prahalad, P., Johari, R., Maahs, D.M. and Majzun, R., 2022. A New Technology-Enabled Care Model for 
 Pediatric Type 1 Diabetes. *NEJM Catalyst Innovations in Care Delivery*, 3(5), pp.CAT-21.
 [doi:10.1056/CAT.21.04386](https://doi.org/10.1056/CAT.21.04386)
-
