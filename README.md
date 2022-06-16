@@ -32,5 +32,5 @@ population health. [medRxiv 2021.05.04.21256647](https://doi.org/10.1101/2021.05
 ## Deploying the app on the web with AWS Elastic Beanstalk:
 
 1. Create a new web server environment using the latest Python 3 managed platform.
-2. Compress all files repository and upload the zipped folder to the console. 
+2. Compress all files in the repository and upload the zipped folder to the console. 
 3. Make sure that the zipped folder does not contain any additional files, such as hidden system files and folders. 
