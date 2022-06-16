@@ -7,7 +7,7 @@ Timely Interventions for Diabetes Excellence (TIDE) is an open-source tool for t
 population-level continuous glucose monitoring (CGM) data and for the algorithmic prioritization of patients with 
 type 1 diabetes. 
 
-The patient prioritization algorithm uses a flag system based on interpretable clinical criteria such as the percentage 
+The patient prioritization algorithm uses a flag system based on interpretable clinical criteria, such as the percentage 
 of glucose readings between 70 and 180 mg/dL (time-in-range or TIR), the percentage of glucose readings below 70 mg/dL 
 (hypoglycemia) and the percentage of glucose readings below 54 mg/dL (clinically significant hypoglycemia). The clinical
 indicators are calculated on the individual patients' blood glucose level time-series over the previous 14 days. 
@@ -19,9 +19,9 @@ in more urgent need of review.
 
 This repository contains the Python implementation of TIDE, which is also available in [R and Tableau](https://github.com/jferstad/SURF-TIDE). 
 The code uses synthetic patients' blood glucose level time-series stored in a static CSV file, as this allows developers
-to run the code directly without the need of obtaining the API credentials from a specific CGM device provider. The code in 
-this repository has been deployed on [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) without changes, 
-and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-west-2.elasticbeanstalk.com/).
+to clone the repository and run the code directly without the need of obtaining the API credentials from a specific CGM 
+device provider. The code in this repository has been deployed on [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) 
+without changes, and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-west-2.elasticbeanstalk.com/).
 
 ## Population View
 
