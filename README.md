@@ -23,11 +23,11 @@ to run the code directly without the need of obtaining the API credentials from 
 this repository has been deployed on [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) without changes, 
 and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-west-2.elasticbeanstalk.com/).
 
-### Population View
+#### Population View
 
 ![population-view-screenshot](screenshots/population_view.png)
 
-### Patient View
+#### Patient View
 
 ![patient-view-screenshot](screenshots/patient_view.png)
 
