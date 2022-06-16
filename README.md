@@ -5,7 +5,7 @@
 
 Timely Interventions for Diabetes Excellence (TIDE) is an open-source tool for the semi-automated analysis of 
 population-level continuous glucose monitoring (CGM) data and for the algorithmic prioritization of patients with 
-type 1 diabetes. 
+type 1 diabetes developed by [SURF Stanford Medicine](https://surf.stanford.edu/).
 
 The patient prioritization algorithm uses a flag system based on interpretable clinical criteria, such as the percentage 
 of glucose readings between 70 and 180 mg/dL (time-in-range or TIR), the percentage of glucose readings below 70 mg/dL 
