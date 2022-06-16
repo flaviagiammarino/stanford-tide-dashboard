@@ -6,8 +6,6 @@
 ![last-commit](https://img.shields.io/github/last-commit/flaviagiammarino/stanford-tide-dashboard)
 ![website-status](https://img.shields.io/website?url=http%3A%2F%2Fstanford-tide-dashboard.eu-west-2.elasticbeanstalk.com%2F)
 
-<hr>
-
 Timely Interventions for Diabetes Excellence (TIDE) is an open-source tool for the semi-automated analysis of 
 population-level continuous glucose monitoring (CGM) data and for the algorithmic prioritization of patients with 
 type 1 diabetes. 
@@ -30,21 +28,15 @@ and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-w
 
 *Population-Level View*
 
-<hr>
-
 ![population-view-screenshot](screenshots/population_view.png)
 
 <br>
 
 *Patient-Level View*
 
-<hr>
-
 ![patient-view-screenshot](screenshots/patient_view.png)
 
 ### Usage
-
-<hr>
 
 1. Clone the repository.
 
@@ -68,8 +60,6 @@ and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-w
     ```
 
 ### References
-
-<hr>
 
 [1] Ferstad, J.O., Vallon, J.J., Jun, D., Gu, A., Vitko, A., Morales, D.P., Leverenz, J., Lee, M.Y., Leverenz, B., Vasilakis, C. and Osmanlliu, E., 2021. Population‐level management of type 1 diabetes via continuous glucose monitoring and algorithm‐enabled patient prioritization: Precision health meets population health. *Pediatric Diabetes*, 22(7), pp.982-991.
 
