@@ -10,7 +10,7 @@ type 1 diabetes.
 The patient prioritization algorithm uses a flag system based on interpretable clinical criteria such as the percentage 
 of glucose readings between 70 and 180 mg/dL (time-in-range or TIR), the percentage of glucose readings below 70 mg/dL 
 (hypoglycemia) and the percentage of glucose readings below 54 mg/dL (clinically significant hypoglycemia). The clinical
-indicators are calculated on the individual patients' blood glucose level time series over the previous two weeks. 
+indicators are calculated on the individual patients' blood glucose level time-series over the previous 14 days. 
 
 The tool displays both aggregate population-level data and individual patient-level data, in which case the specific 
 patient to view is selected interactively by the user by clicking on one of the patient's clinical indicators in the
