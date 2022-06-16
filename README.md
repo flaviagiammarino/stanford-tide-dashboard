@@ -18,7 +18,7 @@ patients panel. The tool is intended to be used by care providers on a weekly ba
 in more urgent need of review. 
 
 This repository contains the Python implementation of TIDE, which is also available in [R and Tableau](https://github.com/jferstad/SURF-TIDE). 
-This repository uses synthetic patients' blood glucose level time-series stored in a static CSV file as this allows developers
+The code uses synthetic patients' blood glucose level time-series stored in a static CSV file, as this allows developers
 to run the code directly without the need of obtaining the API credentials from a specific CGM device provider. The code in 
 this repository has been deployed on [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) without changes, 
 and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-west-2.elasticbeanstalk.com/).
