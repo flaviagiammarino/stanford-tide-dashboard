@@ -1,4 +1,4 @@
-## Stanford TIDE
+# Stanford TIDE
 
 ![license](https://img.shields.io/github/license/flaviagiammarino/stanford-tide-dashboard)
 ![languages](https://img.shields.io/badge/languages-python%2C%20css-blue)
@@ -23,15 +23,15 @@ to run the code directly without the need of obtaining the API credentials from 
 this repository has been deployed on [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) without changes, 
 and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-west-2.elasticbeanstalk.com/).
 
-#### Population View
+## Population View
 
 ![population-view-screenshot](screenshots/population_view.png)
 
-#### Patient View
+## Patient View
 
 ![patient-view-screenshot](screenshots/patient_view.png)
 
-### Usage
+## Usage
 
 1. Clone the repository.
 
@@ -54,7 +54,7 @@ and the web interface can be accessed [here](http://stanford-tide-dashboard.eu-w
     python3 application.py
     ```
 
-### References
+## References
 
 [1] Ferstad, J.O., Vallon, J.J., Jun, D., Gu, A., Vitko, A., Morales, D.P., Leverenz, J., Lee, M.Y., Leverenz, B., 
 Vasilakis, C. and Osmanlliu, E., 2021. Population‐level management of type 1 diabetes via continuous glucose monitoring 
