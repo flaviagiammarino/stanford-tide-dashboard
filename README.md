@@ -35,22 +35,22 @@ without changes, and the web interface can be accessed [here](http://stanford-ti
 
 1. Clone the repository.
 
-   ```shell
+   ```
    git clone https://github.com/flaviagiammarino/stanford-tide-dashboard
    ```
-   ```shell
+   ```
    cd stanford-tide-dashboard
    ```
 
 2. Install the requirements.
 
-   ```shell
+   ```
     pip install -r requirements.txt
     ```
 
 3. Run the app.
 
-   ```shell
+   ```
     python3 application.py
     ```
 
