@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 
-from plots.placeholder_chart import placeholder_chart
+from visualizations.empty_chart import empty_chart
 
 line_chart_layout = html.Div(
 
@@ -24,7 +24,7 @@ line_chart_layout = html.Div(
 
                 dcc.Graph(
                     id='line-chart',
-                    figure=placeholder_chart,
+                    figure=empty_chart,
                     config={
                         'responsive': True,
                         'autosizable': True,

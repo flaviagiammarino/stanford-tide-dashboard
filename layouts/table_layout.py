@@ -271,7 +271,7 @@ second_row = [html.Tr(
 
         # First column
         html.Div(
-            id='avg-clucose-table-cell',
+            id='avg-glucose-table-cell',
             className='table-cell',
             style={
                 'border-left': '0.1vw solid #aca899',
