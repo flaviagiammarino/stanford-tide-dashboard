@@ -4,16 +4,19 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from flask import Flask
 
-from layouts.filters_layout import filters_layout
 from layouts.bar_chart_layout import bar_chart_layout
 from layouts.table_layout import table_layout
 from layouts.line_chart_layout import line_chart_layout
-from layouts.timeline_layout import timeline_layout
-from callbacks.bar_chart_callback import update_bar_chart
-from callbacks.line_charts_callback import update_line_charts
+from layouts.calendar_chart_layout import calendar_chart_layout
+
+from callbacks.bar_chart_callbacks import update_bar_chart
+from callbacks.table_callbacks import update_table
+from callbacks.line_chart_callbacks import update_line_chart
+from callbacks.calendar_chart_callbacks import update_calendar_chart
 
 # App data.
-data = pd.read_csv('data/sample_data.csv')
+df = pd.read_csv('data/sample_data.csv', parse_dates=['ts'])
+populations = df['population'].astype(str).unique().tolist()
 
 # App set-up.
 server = Flask(__name__)
@@ -34,16 +37,10 @@ application = app.server
 # App layout.
 app.layout = html.Div(
     children=[
-
-        # Filters.
-        html.Div(
-            children=filters_layout(data),
-            style={'margin': '1.5vw 0vw 0.5vw 0vw'}
-        ),
-
+        
         # Bar chart.
         html.Div(
-            children=bar_chart_layout,
+            children=bar_chart_layout(populations),
             style={'margin': '1vw 0vw 0.5vw 0vw'}
         ),
 
@@ -59,9 +56,9 @@ app.layout = html.Div(
             style={'margin': '1vw 0vw 1vw 0vw'}
         ),
 
-        # Timeline.
+        # Calendar chart.
         html.Div(
-            children=timeline_layout,
+            children=calendar_chart_layout,
             style={'margin': '1vw 0vw 1.5vw 0vw'}
         ),
 
@@ -71,26 +68,9 @@ app.layout = html.Div(
 # App callbacks.
 @app.callback(
     [Output('bar-chart', 'figure'),
-     Output('bar-chart', 'style')],
-    [Input('population-checklist', 'value'),
-     Input('time-worn-less-than-75-checklist', 'value'),
-     Input('time-in-range-less-than-65-checklist', 'value'),
-     Input('time-below-70-greater-than-4-checklist', 'value'),
-     Input('time-below-54-greater-than-1-checklist', 'value'),
-     Input('bar-chart', 'clickData')],
-    [State('bar-chart', 'figure'),
-     State('bar-chart', 'style')]
-)
-def bar_charts_callback(population, time_worn_less_than_75, time_in_range_less_than_65, time_below_70_greater_than_4,
-time_below_54_greater_than_1, click_data, figure, style):
-    
-    # Update the bar chart.
-    return update_bar_chart(data, population, time_worn_less_than_75, time_in_range_less_than_65, time_below_70_greater_than_4,
-    time_below_54_greater_than_1, click_data, figure, style)
-
-@app.callback(
-    [Output('table-header', 'children'),
-     Output('avg-clucose-table-cell', 'children'),
+     Output('bar-chart', 'style'),
+     Output('table-header', 'children'),
+     Output('avg-glucose-table-cell', 'children'),
      Output('very-low-table-cell', 'children'),
      Output('low-table-cell', 'children'),
      Output('in-target-range-table-cell', 'children'),
@@ -128,13 +108,56 @@ time_below_54_greater_than_1, click_data, figure, style):
      Input('time-below-70-greater-than-4-checklist', 'value'),
      Input('time-below-54-greater-than-1-checklist', 'value'),
      Input('bar-chart', 'clickData')],
+    [State('bar-chart', 'figure'),
+     State('bar-chart', 'style')]
 )
-def line_charts_callback(population, time_worn_less_than_75, time_in_range_less_than_65, time_below_70_greater_than_4,
-time_below_54_greater_than_1, click_data):
+def update_dashboard(population,
+                     time_worn_less_than_75,
+                     time_in_range_less_than_65,
+                     time_below_70_greater_than_4,
+                     time_below_54_greater_than_1,
+                     click_data,
+                     figure,
+                     style):
     
-    # Update the table and all the line charts.
-    return update_line_charts(data, population, time_worn_less_than_75, time_in_range_less_than_65, time_below_70_greater_than_4,
-    time_below_54_greater_than_1, click_data)
+    # Create a copy of the patients' dataset.
+    data = df.copy()
+    
+    # Check which inputs have triggered the callback.
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    
+    # Update the bar chart.
+    outputs = update_bar_chart(data,
+                               population,
+                               time_worn_less_than_75,
+                               time_in_range_less_than_65,
+                               time_below_70_greater_than_4,
+                               time_below_54_greater_than_1,
+                               click_data,
+                               figure,
+                               style,
+                               changed_id)
+
+    # If a patient has been selected, use only the data for this patient.
+    if 'bar-chart.clickData' in changed_id:
+        
+        # Extract the id of the selected patient.
+        id = click_data['points'][0]['customdata']
+        
+        # Extract the data for the selected patient.
+        data = data[data['id'] == id].reset_index(drop=True)
+    
+    # Update the table.
+    outputs.extend(update_table(data))
+
+    # Update the line chart.
+    outputs.extend(update_line_chart(data))
+
+    # Update the calendar chart.
+    outputs.extend(update_calendar_chart(data))
+    
+    return outputs
+
 
 # Run the app.
 if __name__ == '__main__':

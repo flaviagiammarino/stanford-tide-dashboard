@@ -18,7 +18,7 @@ html {
     overflow-x: hidden;
 }
 
-/* Filters */
+/* Checklists */
 .checklist-title{
     font-weight: 600;
 }
@@ -47,8 +47,8 @@ html {
     text-align: center;
 }
 
-/* Timeline */
-.timeline-header{
+/* Calendar */
+.calendar-header{
     width: 12.8vw;
     display: inline-block;
     vertical-align: top;
@@ -59,7 +59,7 @@ html {
     box-sizing: border-box;
 }
 
-.timeline-cell{
+.calendar-cell{
     width: 12.8vw;
     height: 7.5vw;
     display: inline-block;
