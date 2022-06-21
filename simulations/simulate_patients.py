@@ -46,7 +46,7 @@ def simulate_patient(id, freq):
     bg += sm.tsa.arma_generate_sample(
         ar=np.r_[1, - np.array([.75, -.25])],
         ma=np.r_[1, np.array([.65, .35])],
-        scale=5.,
+        scale=10.,
         nsample=len(ts)
     )
     
@@ -75,20 +75,20 @@ def simulate_patient(id, freq):
         return [fn(date) for date in ts.to_series().dt.date.unique()]
 
     # Add some upward spikes around mealtimes.
-    bg[ts.to_series().isin(simulate_timestamps(hours=[6, 7, 8]))] = np.random.uniform(low=250, high=450, size=14)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[12, 13, 14]))] = np.random.uniform(low=250, high=450, size=14)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[18, 19, 20]))] = np.random.uniform(low=250, high=450, size=14)
+    bg[ts.to_series().isin(simulate_timestamps(hours=[6, 7, 8]))] = np.random.uniform(low=180, high=400, size=14)
+    bg[ts.to_series().isin(simulate_timestamps(hours=[12, 13, 14]))] = np.random.uniform(low=180, high=400, size=14)
+    bg[ts.to_series().isin(simulate_timestamps(hours=[18, 19, 20]))] = np.random.uniform(low=180, high=400, size=14)
     
     # Add some downward spikes after mealtimes.
-    bg[ts.to_series().isin(simulate_timestamps(hours=[9, 10, 11]))] = np.random.uniform(low=40, high=70, size=14)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[15, 16, 17]))] = np.random.uniform(low=40, high=70, size=14)
-    bg[ts.to_series().isin(simulate_timestamps(hours=[21, 22, 23]))] = np.random.uniform(low=40, high=70, size=14)
+    bg[ts.to_series().isin(simulate_timestamps(hours=[9, 10, 11]))] = np.random.uniform(low=20, high=70, size=14)
+    bg[ts.to_series().isin(simulate_timestamps(hours=[15, 16, 17]))] = np.random.uniform(low=20, high=70, size=14)
+    bg[ts.to_series().isin(simulate_timestamps(hours=[21, 22, 23]))] = np.random.uniform(low=20, high=70, size=14)
     
     # Add an upward or downward shift over the most recent week.
-    bg[ts.max() - ts < pd.Timedelta(days=7)] += np.random.normal(loc=0, scale=25, size=1)
+    bg[ts.max() - ts < pd.Timedelta(days=7)] += np.random.normal(loc=0, scale=10, size=1)
 
     # Smooth the spikes and shifts.
-    bg = gaussian_filter1d(input=bg, sigma=2.5)
+    bg = gaussian_filter1d(input=bg, sigma=3)
     
     # Add a missing sub-sequence.
     start, end = list(np.sort(np.random.randint(low=0, high=len(ts), size=2)))
