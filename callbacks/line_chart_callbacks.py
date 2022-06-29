@@ -1,7 +1,6 @@
 from visualizations.line_chart import line_chart
 
 def update_line_chart(data):
-    
     '''
     Update the line chart.
 

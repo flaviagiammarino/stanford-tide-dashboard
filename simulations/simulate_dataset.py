@@ -78,6 +78,12 @@ def simulate_dataset(num, freq, populations):
 
         'extreme_hyp (%)': float.
             Percentage of time that the patient blood glucose level has been above 250 over a given week.
+        
+        'patient_rank': int.
+            Patient rank.
+        
+        'review': str.
+            Patient priority group.
     '''
     
     # Simulate the patients' blood glucose level time series.

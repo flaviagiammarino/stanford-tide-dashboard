@@ -90,24 +90,25 @@ def preprocess_data(df):
     # Add flag for time worn.
     df['time_worn'] = np.where(pd.notna(df['bg']), 1., 0.)
     
-    # Add flags for extreme hypoglycemia, hypoglycemia, in range, hyperglycemia, extreme hyperglycemia.
-    df['extreme_hypo'] = np.where(df['bg'] < 54, 1., np.where(pd.notna(df['bg']), 0., np.nan))
-    df['hypo'] = np.where((df['bg'] >= 54) & (df['bg'] < 70), 1., np.where(pd.notna(df['bg']), 0., np.nan))
-    df['in_range'] = np.where((df['bg'] >= 70) & (df['bg'] <= 180), 1., np.where(pd.notna(df['bg']), 0., np.nan))
-    df['hyp'] = np.where((df['bg'] > 180) & (df['bg'] <= 250), 1., np.where(pd.notna(df['bg']), 0., np.nan))
-    df['extreme_hyp'] = np.where(df['bg'] > 250, 1., np.where(pd.notna(df['bg']), 0., np.nan))
+    # Add flags for extreme hypo, hypo, in range, hyp, extreme hyp; set flags to NaN when device is not worn.
+    df['extreme_hypo'] = np.where(df['bg'] < 54, 1., 0.)
+    df['hypo'] = np.where((df['bg'] >= 54) & (df['bg'] < 70), 1., 0.)
+    df['in_range'] = np.where((df['bg'] >= 70) & (df['bg'] <= 180), 1., 0.)
+    df['hyp'] = np.where((df['bg'] > 180) & (df['bg'] <= 250), 1., 0.)
+    df['extreme_hyp'] = np.where(df['bg'] > 250, 1., 0.)
+    df.loc[df['time_worn'] == 0., ['extreme_hypo', 'hypo', 'in_range', 'hyp', 'extreme_hyp']] = np.nan
     
-    # Calculate the weekly averages.
+    # Calculate the weekly percentages of time worn, time in extreme hypo, time in hypo, time in range, time in hyp, time in extreme hyp.
     stats = df.drop(labels=['ts', 'bg'], axis=1).groupby(by=['id', 'most_recent_week']).mean()
     stats.columns = [x + ' (%)' for x in stats.columns]
     
-    # Add the weekly averages to the data frame.
+    # Add the weekly percentages to the patients' time series dataset.
     df = pd.merge(left=df, right=stats.reset_index(drop=False), on=['id', 'most_recent_week'])
     
     return df
 
 
-def group_patients(data):
+def prioritize_patients(data):
     '''
     Assign the patients to priority groups. Priority groups are assigned in reverse
     order so each patient gets the highest possible priority given their data.
@@ -190,13 +191,71 @@ def rank_patients(df):
     Parameters:
     ----------------------------------
     df: pd.DataFrame.
-        Preprocessed patients' time series dataset.
-        See the docstring of the preprocess_data() function.
+        Patients' time series dataset.
+        Data frame with the following columns:
+
+        'id': int.
+            Patient id.
+
+        'ts': pd.datetime.
+            Timestamp.
+
+        'bg': float.
+            Blood glucose level.
         
     Returns:
     ----------------------------------
     df: pd.DataFrame.
-        Same as the input data frame, with the following additional columns:
+        Preprocessed patients' time series dataset including patients' ranks and priority groups.
+        Data frame with the following columns:
+
+        'id': int.
+            Patient id.
+
+        'ts': pd.datetime.
+            Timestamp.
+
+        'bg': float.
+            Blood glucose level.
+
+        'most_recent_week': float.
+            1.0 if the timestamp falls within the most recent week, 0.0 otherwise.
+
+        'time_worn': float.
+            1.0 if the patient is wearing the device, 0.0 otherwise.
+
+        'extreme_hypo': float.
+            1.0 if the patient blood glucose level is less than 54, 0.0 otherwise.
+
+        'hypo': float.
+            1.0 if the patient blood glucose level is between 54 and 70, 0.0 otherwise.
+
+        'in_range': float.
+            1.0 if the patient blood glucose level is between 70 and 180, 0.0 otherwise.
+
+        'hyp': float.
+            1.0 if the patient blood glucose level is between 180 and 250, 0.0 otherwise.
+
+        'extreme_hyp': float.
+            1.0 if the patient blood glucose level is greater than 250, 0.0 otherwise.
+
+        'time_worn (%)': float.
+            Percentage of time that the patient has worn the device over a given week.
+
+        'extreme_hypo (%)': float.
+            Percentage of time that the patient blood glucose level has been below 54 over a given week.
+
+        'hypo (%)': float.
+            Percentage of time that the patient blood glucose level has been between 54 and 70 over a given week.
+
+        'in_range (%)': float.
+            Percentage of time that the patient blood glucose level has been between 70 and 180 over a given week.
+
+        'hyp (%)': float.
+            Percentage of time that the patient blood glucose level has been between 180 and 250 over a given week.
+
+        'extreme_hyp (%)': float.
+            Percentage of time that the patient blood glucose level has been above 250 over a given week.
 
         'patient_rank': int.
             Patient rank.
@@ -205,14 +264,14 @@ def rank_patients(df):
             Patient priority group.
     '''
     
-    # Preprocess the data.
+    # Preprocess the patients' time series dataset.
     df = preprocess_data(df)
     
     # Get the percentage of time in range over the previous week.
     data_week_1 = df.loc[df['most_recent_week'] == 0., ['id', 'in_range (%)']].copy()
     data_week_1 = data_week_1.drop_duplicates().reset_index(drop=True)
     
-    # Get the percentages of time worn, in range, hypoglycemia and extreme hypoglycemia over the most recent week.
+    # Get the percentages of time worn, time in range, time in hypo and time in extreme hypo over the most recent week.
     data_week_2 = df.loc[df['most_recent_week'] == 1., ['id', 'time_worn (%)', 'in_range (%)', 'hypo (%)', 'extreme_hypo (%)']].copy()
     data_week_2 = data_week_2.drop_duplicates().reset_index(drop=True)
 
@@ -224,9 +283,9 @@ def rank_patients(df):
     data['rank'] = data[['in_range (%)']].apply(tuple, axis=1).rank(method='dense', ascending=True, na_option='bottom').astype(int)
     
     # Assign the patients to priority groups.
-    data['review'] = group_patients(data)
+    data['review'] = prioritize_patients(data)
     
-    # Add the ranks and priority groups to the input data frame.
+    # Add the ranks and priority groups to the preprocessed patients' time series dataset.
     df = pd.merge(left=df, right=data[['id', 'rank', 'review']], on='id')
     
     return df

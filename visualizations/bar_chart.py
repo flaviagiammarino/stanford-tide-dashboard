@@ -9,8 +9,8 @@ def bar_chart(data):
     Parameters:
     ----------------------------------
     data: pd.DataFrame.
-        Data frame with average blood glucose level, time worn, time in range, time in hypoglycemia
-        and time in extreme hypoglycemia over the last 7 days.
+        Data frame with average blood glucose level, percentage of time worn, percentage of time in range,
+        percentage of time in hypo and percentage of time in extreme hypo over the last 7 days.
     
     Returns:
     ----------------------------------

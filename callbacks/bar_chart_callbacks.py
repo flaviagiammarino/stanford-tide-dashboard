@@ -11,7 +11,6 @@ def update_bar_chart(data,
                      figure,
                      style,
                      changed_id):
-    
     '''
     Update the bar chart.
 

@@ -1,6 +1,5 @@
 
 def update_table(data):
-    
     '''
     Update the table.
 

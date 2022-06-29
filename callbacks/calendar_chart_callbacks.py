@@ -4,7 +4,6 @@ from visualizations.calendar_chart import calendar_chart
 from visualizations.empty_chart import empty_chart
 
 def update_calendar_chart(data):
-    
     '''
     Update the calendar chart.
 

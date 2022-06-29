@@ -1,7 +1,6 @@
 import plotly.graph_objects as go
 
 def calendar_chart(data):
-    
     '''
     Generate the calendar chart.
 
