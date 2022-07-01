@@ -65,7 +65,7 @@ def simulate_dataset(num, freq, populations):
             Percentage of time that the patient has worn the device over a given week.
             
         'extreme_hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been below 54 over a given week.
+            Percentage of time that the patient blood glucose level has been less than 54 over a given week.
 
         'hypo (%)': float.
             Percentage of time that the patient blood glucose level has been between 54 and 70 over a given week.
@@ -77,7 +77,7 @@ def simulate_dataset(num, freq, populations):
             Percentage of time that the patient blood glucose level has been between 180 and 250 over a given week.
 
         'extreme_hyp (%)': float.
-            Percentage of time that the patient blood glucose level has been above 250 over a given week.
+            Percentage of time that the patient blood glucose level has been greater than 250 over a given week.
         
         'patient_rank': int.
             Patient rank.

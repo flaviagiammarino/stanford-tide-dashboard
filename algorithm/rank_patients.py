@@ -60,7 +60,7 @@ def preprocess_data(df):
             Percentage of time that the patient has worn the device over a given week.
 
         'extreme_hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been below 54 over a given week.
+            Percentage of time that the patient blood glucose level has been less than 54 over a given week.
 
         'hypo (%)': float.
             Percentage of time that the patient blood glucose level has been between 54 and 70 over a given week.
@@ -72,7 +72,7 @@ def preprocess_data(df):
             Percentage of time that the patient blood glucose level has been between 180 and 250 over a given week.
 
         'extreme_hyp (%)': float.
-            Percentage of time that the patient blood glucose level has been above 250 over a given week.
+            Percentage of time that the patient blood glucose level has been greater than 250 over a given week.
     '''
     
     # Parse the timestamps.
@@ -90,7 +90,7 @@ def preprocess_data(df):
     # Add flag for time worn.
     df['time_worn'] = np.where(pd.notna(df['bg']), 1., 0.)
     
-    # Add flags for extreme hypo, hypo, in range, hyp, extreme hyp; set flags to NaN when device is not worn.
+    # Add flags for extreme hypo, hypo, in range, hyp, extreme hyp.
     df['extreme_hypo'] = np.where(df['bg'] < 54, 1., 0.)
     df['hypo'] = np.where((df['bg'] >= 54) & (df['bg'] < 70), 1., 0.)
     df['in_range'] = np.where((df['bg'] >= 70) & (df['bg'] <= 180), 1., 0.)
@@ -131,7 +131,7 @@ def prioritize_patients(data):
             Percentage of time that the patient blood glucose level has been between 54 and 70 over the most recent week.
  
         'extreme_hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been below 54 over the most recent week.
+            Percentage of time that the patient blood glucose level has been less than 54 over the most recent week.
         
         'in_range_previous_week (%)': float.
             Percentage of time that the patient blood glucose level has been between 70 and 180 over the previous week.
@@ -147,10 +147,10 @@ def prioritize_patients(data):
     
     # Group 6: No alerts.
     # - time in range didn't decrease by more than 15% over the most recent week
-    # - time in extreme hypo was less than 1% over the most recent week
-    # - time in hypo was less than 3% over the most recent week
-    # - time in range was more than 65% over the most recent week
-    # - time worn was more than 50% over the most recent week
+    # - time in extreme hypo was at most 1% over the most recent week
+    # - time in hypo was at most 3% over the most recent week
+    # - time in range was at least 65% over the most recent week
+    # - time worn was at least 50% over the most recent week
     review[(data['in_range (%)'] - data['in_range_previous_week (%)'] >= - 0.15) &
            (data['extreme_hypo (%)'] <= 0.01) &
            (data['hypo (%)'] <= 0.03) &
@@ -243,7 +243,7 @@ def rank_patients(df):
             Percentage of time that the patient has worn the device over a given week.
 
         'extreme_hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been below 54 over a given week.
+            Percentage of time that the patient blood glucose level has been less than 54 over a given week.
 
         'hypo (%)': float.
             Percentage of time that the patient blood glucose level has been between 54 and 70 over a given week.
@@ -255,7 +255,7 @@ def rank_patients(df):
             Percentage of time that the patient blood glucose level has been between 180 and 250 over a given week.
 
         'extreme_hyp (%)': float.
-            Percentage of time that the patient blood glucose level has been above 250 over a given week.
+            Percentage of time that the patient blood glucose level has been greater than 250 over a given week.
 
         'patient_rank': int.
             Patient rank.
@@ -275,7 +275,7 @@ def rank_patients(df):
     data_week_2 = df.loc[df['most_recent_week'] == 1., ['id', 'time_worn (%)', 'in_range (%)', 'hypo (%)', 'extreme_hypo (%)']].copy()
     data_week_2 = data_week_2.drop_duplicates().reset_index(drop=True)
 
-    # Merge the percentages from both weeks into a unique data frame.
+    # Merge the percentages for both weeks into a unique data frame.
     data = pd.merge(left=data_week_2, right=data_week_1.rename(columns={'in_range (%)': 'in_range_previous_week (%)'}), how='outer', on='id')
     data = data.fillna({'in_range_previous_week (%)': 0.})
 

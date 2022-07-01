@@ -19,19 +19,19 @@ def update_bar_chart(data,
     data: pd.DataFrame.
        Patients' dataset.
 
-    population: list.
+    population: list of str.
         Selected options in "population-checklist".
 
-    time_worn_less_than_75: list.
+    time_worn_less_than_75: list of str.
         Selected options in "time-worn-less-than-75-checklist".
 
-    time_in_range_less_than_65: list.
+    time_in_range_less_than_65: list of str.
         Selected options in "time-in-range-less-than-65-checklist".
 
-    time_below_70_greater_than_4: list.
+    time_below_70_greater_than_4: list of str.
         Selected options in "time-below-70-greater-than-4-checklist".
 
-    time_below_54_greater_than_1: list.
+    time_below_54_greater_than_1: list of str.
         Selected options in "time-below-54-greater-than-1-checklist".
 
     click_data: dict.
@@ -43,8 +43,8 @@ def update_bar_chart(data,
     style: dict.
         Bar chart style dictionary.
     
-    changed_id: list.
-        Inputs that triggered the callback.
+    changed_id: list of str.
+        List of inputs that triggered the callback.
 
     Returns:
     ----------------------------------

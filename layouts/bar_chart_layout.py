@@ -22,7 +22,9 @@ def bar_chart_layout(populations):
                         
                             dcc.Checklist(
                                 id='population-checklist',
-                                options=[{'value': x, 'label': x} for x in populations],
+                                options=[
+                                    {'value': x, 'label': x} for x in populations
+                                ],
                                 value=populations,
                                 inputClassName='checklist-input',
                                 labelClassName='checklist-label'
@@ -43,7 +45,9 @@ def bar_chart_layout(populations):
                         
                             dcc.Checklist(
                                 id='time-worn-less-than-75-checklist',
-                                options=[{'value': 'No', 'label': 'No'}],
+                                options=[
+                                    {'value': 'No', 'label': 'No'}
+                                ],
                                 inputClassName='checklist-input',
                                 labelClassName='checklist-label'
                             ),
