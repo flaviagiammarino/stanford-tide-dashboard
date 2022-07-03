@@ -44,7 +44,7 @@ app.layout = html.Div(
         # Bar chart.
         html.Div(
             children=bar_chart_layout(
-                populations=df['population'].unique().tolist()
+                populations=df['population'].sort_values().unique().tolist()
             ),
             style={'margin': '1vw 0vw 0.5vw 0vw'}
         ),
