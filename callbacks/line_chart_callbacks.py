@@ -1,3 +1,5 @@
+import pandas as pd
+
 from visualizations.line_chart import line_chart
 
 def update_line_chart(data):
@@ -6,7 +8,7 @@ def update_line_chart(data):
 
     Parameters:
     ----------------------------------
-    df: pd.DataFrame.
+    data: pd.DataFrame.
        Patients' dataset.
 
     Returns:
@@ -22,8 +24,7 @@ def update_line_chart(data):
     outputs = ['Glucose Levels for Patient: {}'.format(data['name'].iloc[0] if data['name'].nunique() == 1 else 'All')]
     
     # Extract the hours from the timestamps.
-    data['hour_num'] = data['ts'].dt.hour
-    data['hour_str'] = data['ts'].apply(lambda x: x.strftime(format('%I %p')))
+    data['hour'] = data['ts'].dt.hour
     
     # Define the percentiles.
     def q90(x): return x.quantile(0.90)
@@ -33,12 +34,11 @@ def update_line_chart(data):
     def q10(x): return x.quantile(0.10)
 
     # Calculate the hourly percentiles.
-    data = data.groupby(by=['hour_str']).agg({'bg': [q90, q75, q50, q25, q10], 'hour_num': 'max'}).reset_index(drop=False)
-    data.columns = ['hour_str', '90%', '75% - IQR', '50% - Median', '25% - IQR', '10%', 'hour_num']
-    data = data.sort_values(by='hour_num').drop(labels='hour_num', axis=1)
-    data = data.rename(columns={'hour_str': 'hour'}).reset_index(drop=True)
+    data = data.groupby(by='hour').agg({'bg': [q90, q75, q50, q25, q10]})
+    data.columns = ['90%', '75% - IQR', '50% - Median', '25% - IQR', '10%']
+    data['hour'] = pd.to_datetime(data.index, format='%H').strftime('%I %p')
     
-    # Update the data in the figure.
+    # Update the figure.
     outputs.append(line_chart(data))
     
     return outputs

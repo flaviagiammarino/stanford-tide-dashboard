@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 def simulate_patient(id, freq):
     '''
-    Simulate a single patient's blood glucose level time series.
+    Simulate a single patient's blood glucose level time series over the last 14 days.
 
     Parameters:
     ----------------------------------
@@ -99,7 +99,7 @@ def simulate_patient(id, freq):
 
 def simulate_patients(freq, num, distributed=True):
     '''
-    Simulate multiple patients' blood glucose level time series.
+    Simulate multiple patients' blood glucose level time series over the last 14 days.
 
     Parameters:
     ----------------------------------

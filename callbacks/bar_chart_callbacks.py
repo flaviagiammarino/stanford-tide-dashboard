@@ -2,7 +2,7 @@ from visualizations.bar_chart import bar_chart
 from visualizations.empty_chart import empty_chart
 
 def update_bar_chart(data,
-                     population,
+                     populations,
                      time_worn_less_than_75,
                      time_in_range_less_than_65,
                      time_below_70_greater_than_4,
@@ -19,7 +19,7 @@ def update_bar_chart(data,
     data: pd.DataFrame.
        Patients' dataset.
 
-    population: list of str.
+    populations: list of str.
         Selected options in "population-checklist".
 
     time_worn_less_than_75: list of str.
@@ -54,40 +54,38 @@ def update_bar_chart(data,
 
     # If the filters have changed, draw a new bar chart.
     if 'bar-chart.clickData' not in changed_id:
+    
+        # Copy the data.
+        data = data.copy()
         
         # Filter the data.
-        data = data[data['most_recent_week'] == 1]
+        data = data[(data['most_recent_week'] == 1) & (data['population'].isin(populations))]
+        data = data[['id', 'name', 'device_worn (%)', 'bg (avg)', 'in_range (%)', 'hypo (%)', 'extreme_hypo (%)', 'rank', 'review']]
+        data = data.drop_duplicates(subset='id', ignore_index=True).fillna(value=0.)
         
-        if population is not None:
-            data = data[data['population'].isin(population)]
+        if time_worn_less_than_75 == ['No']:
+            data = data[data['device_worn (%)'] >= 0.75]
 
-        if time_worn_less_than_75 is not None:
-            if time_worn_less_than_75 == ['Yes']:
-                data = data[data['time_worn (%)'] < 0.75]
-            elif time_worn_less_than_75 == ['No']:
-                data = data[data['time_worn (%)'] >= 0.75]
+        if time_in_range_less_than_65 == ['Yes']:
+            data = data[data['in_range (%)'] < 0.65]
+        
+        elif time_in_range_less_than_65 == ['No']:
+            data = data[data['in_range (%)'] >= 0.65]
 
-        if time_in_range_less_than_65 is not None:
-            if time_in_range_less_than_65 == ['Yes']:
-                data = data[data['in_range (%)'] < 0.65]
-            elif time_in_range_less_than_65 == ['No']:
-                data = data[data['in_range (%)'] >= 0.65]
+        if time_below_70_greater_than_4 == ['Yes']:
+            data = data[data['hypo (%)'] > 0.04]
+        
+        elif time_below_70_greater_than_4 == ['No']:
+            data = data[data['hypo (%)'] <= 0.04]
 
-        if time_below_70_greater_than_4 is not None:
-            if time_below_70_greater_than_4 == ['Yes']:
-                data = data[data['hypo (%)'] > 0.04]
-            elif time_below_70_greater_than_4 == ['No']:
-                data = data[data['hypo (%)'] <= 0.04]
+        if time_below_54_greater_than_1 == ['Yes']:
+            data = data[data['extreme_hypo (%)'] > 0.01]
+        
+        elif time_below_54_greater_than_1 == ['No']:
+            data = data[data['extreme_hypo (%)'] <= 0.01]
 
-        if time_below_54_greater_than_1 is not None:
-            if time_below_54_greater_than_1 == ['Yes']:
-                data = data[data['extreme_hypo (%)'] > 0.01]
-            elif time_below_54_greater_than_1 == ['No']:
-                data = data[data['extreme_hypo (%)'] <= 0.01]
-
-        # Average the data.
-        data = data.groupby(by=['review', 'rank', 'id', 'name'])[['time_worn', 'bg', 'in_range', 'hypo', 'extreme_hypo']].mean()
-        data = data.sort_values(by=['review', 'rank'], ascending=[False, True]).fillna(value=0).reset_index()
+        # Sort the data.
+        data = data.sort_values(by=['review', 'rank'], ascending=[False, True], ignore_index=True)
         
         # If the data frame is not empty, return the bar chart.
         if not data.empty:

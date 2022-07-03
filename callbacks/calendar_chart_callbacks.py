@@ -9,7 +9,7 @@ def update_calendar_chart(data):
 
     Parameters:
     ----------------------------------
-    df: pd.DataFrame.
+    data: pd.DataFrame.
        Patients' dataset.
 
     Returns:
@@ -23,21 +23,20 @@ def update_calendar_chart(data):
 
     # Extract the days and hours from the timestamps.
     data['day'] = data['ts'].dt.day
-    data['hour_num'] = data['ts'].dt.hour
-    data['hour_str'] = data['ts'].apply(lambda x: x.strftime(format('%I %p')))
+    data['hour'] = data['ts'].dt.hour
 
     # Get the last 21 days.
-    end_date = (data['ts'].max() + pd.offsets.Week(weekday=6)).replace(hour=0, minute=0, second=0, microsecond=0)
-    start_date = (end_date - pd.Timedelta(days=20)).replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = data['ts'].max().date() + pd.offsets.Week(weekday=6)
+    start_date = end_date - pd.offsets.Day(n=20)
     days = pd.date_range(start=start_date, end=end_date, freq='D')
 
     # Calculate the hourly medians over the last 14 days.
-    data = data.groupby(by=['most_recent_week', 'day', 'hour_str', 'hour_num'])['bg'].median().reset_index()
-    data = data.sort_values(by=['most_recent_week', 'day', 'hour_num'], ascending=[True, True, True])
-    data = data.drop(labels=['hour_num'], axis=1).rename(columns={'hour_str': 'hour'})
-
-    # Generate the line charts of the hourly medians for each of the last 21 days. Note that an empty chart
-    # is returned for the additional 7 days displayed in the calendar.
+    data = data.groupby(by=['most_recent_week', 'day', 'hour'])['bg'].median().reset_index()
+    data = data.sort_values(by=['most_recent_week', 'day', 'hour'], ascending=[True, True, True])
+    data['hour'] = pd.to_datetime(data['hour'], format='%H').dt.strftime('%I %p')
+    
+    # Update the line charts of the hourly medians for each of the last 21 days,
+    # skip the additional 7 days displayed in the calendar.
     outputs = []
     for day in days.day:
         data_ = data[data['day'] == day]

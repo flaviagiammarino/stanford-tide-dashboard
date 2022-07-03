@@ -38,41 +38,50 @@ def preprocess_data(df):
         'most_recent_week': float.
             1.0 if the timestamp falls within the most recent week, 0.0 otherwise.
 
-        'time_worn': float.
+        'device_worn': float.
             1.0 if the patient is wearing the device, 0.0 otherwise.
 
         'extreme_hypo': float.
-            1.0 if the patient blood glucose level is less than 54, 0.0 otherwise.
+            1.0 if the patient's blood glucose level is less than 54, 0.0 otherwise.
 
         'hypo': float.
-            1.0 if the patient blood glucose level is between 54 and 70, 0.0 otherwise.
+            1.0 if the patient's blood glucose level is between 54 and 70, 0.0 otherwise.
 
         'in_range': float.
-            1.0 if the patient blood glucose level is between 70 and 180, 0.0 otherwise.
+            1.0 if the patient's blood glucose level is between 70 and 180, 0.0 otherwise.
 
         'hyp': float.
-            1.0 if the patient blood glucose level is between 180 and 250, 0.0 otherwise.
+            1.0 if the patient's blood glucose level is between 180 and 250, 0.0 otherwise.
 
         'extreme_hyp': float.
-            1.0 if the patient blood glucose level is greater than 250, 0.0 otherwise.
+            1.0 if the patient's blood glucose level is greater than 250, 0.0 otherwise.
 
-        'time_worn (%)': float.
+        'device_worn (%)': float.
             Percentage of time that the patient has worn the device over a given week.
 
         'extreme_hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been less than 54 over a given week.
+            Percentage of time that the patient's blood glucose level has been less than 54 over a given week.
 
         'hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been between 54 and 70 over a given week.
+            Percentage of time that the patient's blood glucose level has been between 54 and 70 over a given week.
 
         'in_range (%)': float.
-            Percentage of time that the patient blood glucose level has been between 70 and 180 over a given week.
+            Percentage of time that the patient's blood glucose level has been between 70 and 180 over a given week.
 
         'hyp (%)': float.
-            Percentage of time that the patient blood glucose level has been between 180 and 250 over a given week.
+            Percentage of time that the patient's blood glucose level has been between 180 and 250 over a given week.
 
         'extreme_hyp (%)': float.
-            Percentage of time that the patient blood glucose level has been greater than 250 over a given week.
+            Percentage of time that the patient's blood glucose level has been greater than 250 over a given week.
+        
+        'bg (avg)': float.
+            Patient's average blood glucose level over a given week.
+        
+        'rank': int.
+            Patient's rank.
+        
+        'review': str.
+            Patient's priority group.
     '''
     
     # Parse the timestamps.
@@ -81,14 +90,14 @@ def preprocess_data(df):
     # Infer the frequency of the time series (in minutes)
     freq = df.groupby(by='id')['ts'].diff().mode()[0].total_seconds() / 60
     
-    # Resample all time series at the same frequency.
+    # Resample all the time series at the same frequency.
     df = df.set_index('ts').groupby(by='id')['bg'].resample(f'{freq}T').last().reset_index()
     
     # Add flag for most recent week.
     df['most_recent_week'] = np.where(df['ts'].max() - df['ts'] < pd.Timedelta(days=7), 1., 0.)
     
-    # Add flag for time worn.
-    df['time_worn'] = np.where(pd.notna(df['bg']), 1., 0.)
+    # Add flag for device worn.
+    df['device_worn'] = np.where(pd.notna(df['bg']), 1., 0.)
     
     # Add flags for extreme hypo, hypo, in range, hyp, extreme hyp.
     df['extreme_hypo'] = np.where(df['bg'] < 54, 1., 0.)
@@ -96,14 +105,35 @@ def preprocess_data(df):
     df['in_range'] = np.where((df['bg'] >= 70) & (df['bg'] <= 180), 1., 0.)
     df['hyp'] = np.where((df['bg'] > 180) & (df['bg'] <= 250), 1., 0.)
     df['extreme_hyp'] = np.where(df['bg'] > 250, 1., 0.)
-    df.loc[df['time_worn'] == 0., ['extreme_hypo', 'hypo', 'in_range', 'hyp', 'extreme_hyp']] = np.nan
+    df.loc[df['device_worn'] == 0., ['extreme_hypo', 'hypo', 'in_range', 'hyp', 'extreme_hyp']] = np.nan
     
     # Calculate the weekly percentages of time worn, time in extreme hypo, time in hypo, time in range, time in hyp, time in extreme hyp.
     stats = df.drop(labels=['ts', 'bg'], axis=1).groupby(by=['id', 'most_recent_week']).mean()
     stats.columns = [x + ' (%)' for x in stats.columns]
     
-    # Add the weekly percentages to the patients' time series dataset.
-    df = pd.merge(left=df, right=stats.reset_index(drop=False), on=['id', 'most_recent_week'])
+    # Calculate the weekly average blood glucose level.
+    stats = stats.join(df.groupby(by=['id', 'most_recent_week'])['bg'].mean())
+    stats = stats.rename(columns={'bg': 'bg (avg)'}).reset_index(drop=False)
+
+    # Prepare the data for ranking.
+    data = pd.merge(
+        left=stats.loc[stats['most_recent_week'] == 0., ['id', 'in_range (%)']].rename(columns={'in_range (%)': 'in_range_previous_week (%)'}),
+        right=stats.loc[stats['most_recent_week'] == 1., ['id', 'device_worn (%)', 'in_range (%)', 'hypo (%)', 'extreme_hypo (%)']],
+        on='id',
+        how='outer'
+    ).fillna({'in_range_previous_week (%)': 0.})
+
+    # Rank the patients by time in range over the most recent week.
+    data['rank'] = data[['in_range (%)']].apply(tuple, axis=1).rank(method='dense', ascending=True, na_option='bottom').astype(int)
+
+    # Assign the patients to priority groups.
+    data['review'] = prioritize_patients(data)
+
+    # Add the weekly statistics to the input data frame.
+    df = pd.merge(left=df, right=stats, on=['id', 'most_recent_week'])
+    
+    # Add the ranks and priority groups to the input data frame.
+    df = pd.merge(left=df, right=data[['id', 'rank', 'review']], on='id')
     
     return df
 
@@ -121,20 +151,20 @@ def prioritize_patients(data):
         'id': int.
             Patient id.
 
-        'time_worn (%)': float.
+        'device_worn (%)': float.
             Percentage of time that the patient has worn the device over the most recent week.
 
         'in_range (%)': float.
-            Percentage of time that the patient blood glucose level has been between 70 and 180 over the most recent week.
+            Percentage of time that the patient's blood glucose level has been between 70 and 180 over the most recent week.
 
         'hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been between 54 and 70 over the most recent week.
+            Percentage of time that the patient's blood glucose level has been between 54 and 70 over the most recent week.
  
         'extreme_hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been less than 54 over the most recent week.
+            Percentage of time that the patient's blood glucose level has been less than 54 over the most recent week.
         
         'in_range_previous_week (%)': float.
-            Percentage of time that the patient blood glucose level has been between 70 and 180 over the previous week.
+            Percentage of time that the patient's blood glucose level has been between 70 and 180 over the previous week.
  
     Returns:
     ----------------------------------
@@ -155,137 +185,30 @@ def prioritize_patients(data):
            (data['extreme_hypo (%)'] <= 0.01) &
            (data['hypo (%)'] <= 0.03) &
            (data['in_range (%)'] >= 0.65) &
-           (data['time_worn (%)'] >= 0.5)] = '(6) No alerts'
+           (data['device_worn (%)'] >= 0.5)] = '(6) No alerts'
     
     # Group 4: Low TIR.
     # - time in range was less than 65% over the most recent week
     # - time worn was more than 50% over the most recent week
     review[(data['in_range (%)'] < 0.65) &
-           (data['time_worn (%)'] > 0.5)] = '(4) Low TIR'
+           (data['device_worn (%)'] > 0.5)] = '(4) Low TIR'
     
     # Group 3: Large drop in TIR.
     # - time in range decreased by more than 15% over the most recent week
     # - time worn was more than 50% over the most recent week
     review[(data['in_range (%)'] - data['in_range_previous_week (%)'] < - 0.15) &
-           (data['time_worn (%)'] > 0.5)] = '(3) Large drop in TIR'
+           (data['device_worn (%)'] > 0.5)] = '(3) Large drop in TIR'
     
     # Group 2: High lows.
     # - time in hypo was more than 3% over the most recent week
     # - time worn was more than 50% over the most recent week
     review[(data['hypo (%)'] > 0.03) &
-           (data['time_worn (%)'] > 0.5)] = '(2) High lows'
+           (data['device_worn (%)'] > 0.5)] = '(2) High lows'
     
     # Group 1: High extreme lows.
     # - time in extreme hypo was more than 1% over the most recent week
     # - time worn was more than 50% over the most recent week
     review[((data['extreme_hypo (%)'] > 0.01) &
-            (data['time_worn (%)'] > 0.5))] = '(1) High extreme lows'
+            (data['device_worn (%)'] > 0.5))] = '(1) High extreme lows'
     
     return review
-
-
-def rank_patients(df):
-    '''
-    Rank the patients and assign the patients to priority groups.
-    
-    Parameters:
-    ----------------------------------
-    df: pd.DataFrame.
-        Patients' time series dataset.
-        Data frame with the following columns:
-
-        'id': int.
-            Patient id.
-
-        'ts': pd.datetime.
-            Timestamp.
-
-        'bg': float.
-            Blood glucose level.
-        
-    Returns:
-    ----------------------------------
-    df: pd.DataFrame.
-        Preprocessed patients' time series dataset including patients' ranks and priority groups.
-        Data frame with the following columns:
-
-        'id': int.
-            Patient id.
-
-        'ts': pd.datetime.
-            Timestamp.
-
-        'bg': float.
-            Blood glucose level.
-
-        'most_recent_week': float.
-            1.0 if the timestamp falls within the most recent week, 0.0 otherwise.
-
-        'time_worn': float.
-            1.0 if the patient is wearing the device, 0.0 otherwise.
-
-        'extreme_hypo': float.
-            1.0 if the patient blood glucose level is less than 54, 0.0 otherwise.
-
-        'hypo': float.
-            1.0 if the patient blood glucose level is between 54 and 70, 0.0 otherwise.
-
-        'in_range': float.
-            1.0 if the patient blood glucose level is between 70 and 180, 0.0 otherwise.
-
-        'hyp': float.
-            1.0 if the patient blood glucose level is between 180 and 250, 0.0 otherwise.
-
-        'extreme_hyp': float.
-            1.0 if the patient blood glucose level is greater than 250, 0.0 otherwise.
-
-        'time_worn (%)': float.
-            Percentage of time that the patient has worn the device over a given week.
-
-        'extreme_hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been less than 54 over a given week.
-
-        'hypo (%)': float.
-            Percentage of time that the patient blood glucose level has been between 54 and 70 over a given week.
-
-        'in_range (%)': float.
-            Percentage of time that the patient blood glucose level has been between 70 and 180 over a given week.
-
-        'hyp (%)': float.
-            Percentage of time that the patient blood glucose level has been between 180 and 250 over a given week.
-
-        'extreme_hyp (%)': float.
-            Percentage of time that the patient blood glucose level has been greater than 250 over a given week.
-
-        'patient_rank': int.
-            Patient rank.
-        
-        'review': str.
-            Patient priority group.
-    '''
-    
-    # Preprocess the patients' time series dataset.
-    df = preprocess_data(df)
-    
-    # Get the percentage of time in range over the previous week.
-    data_week_1 = df.loc[df['most_recent_week'] == 0., ['id', 'in_range (%)']].copy()
-    data_week_1 = data_week_1.drop_duplicates().reset_index(drop=True)
-    
-    # Get the percentages of time worn, time in range, time in hypo and time in extreme hypo over the most recent week.
-    data_week_2 = df.loc[df['most_recent_week'] == 1., ['id', 'time_worn (%)', 'in_range (%)', 'hypo (%)', 'extreme_hypo (%)']].copy()
-    data_week_2 = data_week_2.drop_duplicates().reset_index(drop=True)
-
-    # Merge the percentages for both weeks into a unique data frame.
-    data = pd.merge(left=data_week_2, right=data_week_1.rename(columns={'in_range (%)': 'in_range_previous_week (%)'}), how='outer', on='id')
-    data = data.fillna({'in_range_previous_week (%)': 0.})
-
-    # Rank the patients by time in range over the most recent week.
-    data['rank'] = data[['in_range (%)']].apply(tuple, axis=1).rank(method='dense', ascending=True, na_option='bottom').astype(int)
-    
-    # Assign the patients to priority groups.
-    data['review'] = prioritize_patients(data)
-    
-    # Add the ranks and priority groups to the preprocessed patients' time series dataset.
-    df = pd.merge(left=df, right=data[['id', 'rank', 'review']], on='id')
-    
-    return df

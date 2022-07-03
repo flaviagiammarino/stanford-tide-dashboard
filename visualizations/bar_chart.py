@@ -39,11 +39,11 @@ def bar_chart(data):
 
     # Define the tooltip text.
     hovertemplate = \
-        '<b>% Time Worn: </b>' + data['time_worn'].apply(lambda x: format(x, '.0%')) + '<br>' + \
-        '<b>Avg. Glucose (mg/dL): </b>' + data['bg'].apply(lambda x: format(x, '.0f')) + '<br>' + \
-        '<b>% Time in Range: </b>' + data['in_range'].apply(lambda x: format(x, '.0%')) + '<br>' + \
-        '<b>% Time Below 70: </b>' + data['hypo'].apply(lambda x: format(x, '.1%')) + '<br>' + \
-        '<b>% Time Below 54: </b>' + data['extreme_hypo'].apply(lambda x: format(x, '.1%')) + '<extra></extra>'
+        '<b>% Time Worn: </b>' + data['device_worn (%)'].apply(lambda x: format(x, '.0%')) + '<br>' + \
+        '<b>Avg. Glucose (mg/dL): </b>' + data['bg (avg)'].apply(lambda x: format(x, '.0f')) + '<br>' + \
+        '<b>% Time in Range: </b>' + data['in_range (%)'].apply(lambda x: format(x, '.0%')) + '<br>' + \
+        '<b>% Time Below 70: </b>' + data['hypo (%)'].apply(lambda x: format(x, '.1%')) + '<br>' + \
+        '<b>% Time Below 54: </b>' + data['extreme_hypo (%)'].apply(lambda x: format(x, '.1%')) + '<extra></extra>'
 
     # Define the colorscale.
     blue = 'rgba(31, 119, 180, 0.9)'
@@ -53,9 +53,9 @@ def bar_chart(data):
     fig.add_trace(
         trace=go.Bar(
             y=[data['review'], data['name']],
-            x=data['time_worn'],
+            x=data['device_worn (%)'],
             customdata=data['id'],
-            text=data['time_worn'].apply(lambda x: format(x, '.0%')),
+            text=data['device_worn (%)'].apply(lambda x: format(x, '.0%')),
             textposition='outside',
             textfont=dict(
                 family='Arial',
@@ -64,7 +64,7 @@ def bar_chart(data):
             ),
             orientation='h',
             marker=dict(
-                color=np.where(data['time_worn'] < 0.75, red, blue),
+                color=np.where(data['device_worn (%)'] < 0.75, red, blue),
                 line=dict(width=0)
             ),
             width=0.8,
@@ -79,9 +79,9 @@ def bar_chart(data):
     fig.add_trace(
         trace=go.Bar(
             y=[data['review'], data['name']],
-            x=data['bg'],
+            x=data['bg (avg)'],
             customdata=data['id'],
-            text=data['bg'].apply(lambda x: format(x, ',.0f')),
+            text=data['bg (avg)'].apply(lambda x: format(x, ',.0f')),
             textposition='outside',
             textfont=dict(
                 family='Arial',
@@ -90,7 +90,7 @@ def bar_chart(data):
             ),
             orientation='h',
             marker=dict(
-                color=np.where(data['bg'] < 54, red, blue),
+                color=np.where(data['bg (avg)'] < 54, red, blue),
                 line=dict(width=0)
             ),
             width=0.8,
@@ -105,9 +105,9 @@ def bar_chart(data):
     fig.add_trace(
         trace=go.Bar(
             y=[data['review'], data['name']],
-            x=data['in_range'],
+            x=data['in_range (%)'],
             customdata=data['id'],
-            text=data['in_range'].apply(lambda x: format(x, '.0%')),
+            text=data['in_range (%)'].apply(lambda x: format(x, '.0%')),
             textposition='outside',
             textfont=dict(
                 family='Arial',
@@ -116,7 +116,7 @@ def bar_chart(data):
             ),
             orientation='h',
             marker=dict(
-                color=np.where(data['in_range'] < 0.65, red, blue),
+                color=np.where(data['in_range (%)'] < 0.65, red, blue),
                 line=dict(width=0)
             ),
             width=0.8,
@@ -131,9 +131,9 @@ def bar_chart(data):
     fig.add_trace(
         trace=go.Bar(
             y=[data['review'], data['name']],
-            x=data['hypo'],
+            x=data['hypo (%)'],
             customdata=data['id'],
-            text=data['hypo'].apply(lambda x: format(x, '.1%')),
+            text=data['hypo (%)'].apply(lambda x: format(x, '.1%')),
             textposition='outside',
             textfont=dict(
                 family='Arial',
@@ -142,7 +142,7 @@ def bar_chart(data):
             ),
             orientation='h',
             marker=dict(
-                color=np.where(data['hypo'] > 0.04, red, blue),
+                color=np.where(data['hypo (%)'] > 0.04, red, blue),
                 line=dict(width=0)
             ),
             width=0.8,
@@ -157,9 +157,9 @@ def bar_chart(data):
     fig.add_trace(
         trace=go.Bar(
             y=[data['review'], data['name']],
-            x=data['extreme_hypo'],
+            x=data['extreme_hypo (%)'],
             customdata=data['id'],
-            text=data['extreme_hypo'].apply(lambda x: format(x, '.1%')),
+            text=data['extreme_hypo (%)'].apply(lambda x: format(x, '.1%')),
             textposition='outside',
             textfont=dict(
                 family='Arial',
@@ -168,7 +168,7 @@ def bar_chart(data):
             ),
             orientation='h',
             marker=dict(
-                color=np.where(data['extreme_hypo'] > 0.01, red, blue),
+                color=np.where(data['extreme_hypo (%)'] > 0.01, red, blue),
                 line=dict(width=0)
             ),
             width=0.8,
@@ -195,7 +195,7 @@ def bar_chart(data):
             color='#55514b'
         ),
         xaxis=dict(
-            range=[0, data['time_worn'].max() + 0.2],
+            range=[0, data['device_worn (%)'].max() + 0.2],
             fixedrange=True,
             tickmode='array',
             tickvals=[0, 0.25, 0.5, 0.75, 1],
@@ -222,7 +222,7 @@ def bar_chart(data):
             side='top'
         ),
         xaxis2=dict(
-            range=[0, data['bg'].max() + 30],
+            range=[0, data['bg (avg)'].max() + 30],
             fixedrange=True,
             tickformat=',.0f',
             tickangle=0,
@@ -247,7 +247,7 @@ def bar_chart(data):
             side='top'
         ),
         xaxis3=dict(
-            range=[0, data['in_range'].max() + 0.2],
+            range=[0, data['in_range (%)'].max() + 0.2],
             fixedrange=True,
             tickmode='array',
             tickvals=[0, 0.25, 0.5, 0.75, 1],
@@ -274,7 +274,7 @@ def bar_chart(data):
             side='top'
         ),
         xaxis4=dict(
-            range=[0, np.min([data['hypo'].max() + 0.1, 1])],
+            range=[0, np.min([data['hypo (%)'].max() + 0.1, 1])],
             fixedrange=True,
             tickformat='.0%',
             tickangle=0,
@@ -299,7 +299,7 @@ def bar_chart(data):
             side='top'
         ),
         xaxis5=dict(
-            range=[0, np.min([data['extreme_hypo'].max() + 0.1, 1])],
+            range=[0, np.min([data['extreme_hypo (%)'].max() + 0.1, 1])],
             fixedrange=True,
             tickformat='.0%',
             tickangle=0,

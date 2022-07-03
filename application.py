@@ -1,4 +1,3 @@
-import pandas as pd
 import dash
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -14,9 +13,13 @@ from callbacks.table_callbacks import update_table
 from callbacks.line_chart_callbacks import update_line_chart
 from callbacks.calendar_chart_callbacks import update_calendar_chart
 
-# App data.
-df = pd.read_csv('data/sample_data.csv', parse_dates=['ts'])
-populations = df['population'].astype(str).unique().tolist()
+# App data (sample).
+from data.sample_data import load_sample_data
+df = load_sample_data()
+
+# App data (random).
+# from data.sample_data import generate_random_data
+# df = generate_random_data()
 
 # App set-up.
 server = Flask(__name__)
@@ -40,7 +43,9 @@ app.layout = html.Div(
         
         # Bar chart.
         html.Div(
-            children=bar_chart_layout(populations),
+            children=bar_chart_layout(
+                populations=df['population'].unique().tolist()
+            ),
             style={'margin': '1vw 0vw 0.5vw 0vw'}
         ),
 
@@ -111,7 +116,7 @@ app.layout = html.Div(
     [State('bar-chart', 'figure'),
      State('bar-chart', 'style')]
 )
-def update_dashboard(population,
+def update_dashboard(populations,
                      time_worn_less_than_75,
                      time_in_range_less_than_65,
                      time_below_70_greater_than_4,
@@ -128,7 +133,7 @@ def update_dashboard(population,
     
     # Update the bar chart.
     outputs = update_bar_chart(data,
-                               population,
+                               populations,
                                time_worn_less_than_75,
                                time_in_range_less_than_65,
                                time_below_70_greater_than_4,
