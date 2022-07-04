@@ -42,6 +42,6 @@ def update_table(data):
     outputs.append(format(data['bg'].std(), '.1f'))
 
     # Update the average time worn.
-    outputs.append(format(data['device_worn (%)'].mean(), '.1%'))
+    outputs.append(format(data['device_worn'].mean(), '.1%'))
 
     return outputs

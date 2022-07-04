@@ -178,12 +178,12 @@ def prioritize_patients(data):
     # Group 6: No alerts.
     # - time in range didn't decrease by more than 15% over the most recent week
     # - time in extreme hypo was at most 1% over the most recent week
-    # - time in hypo was at most 3% over the most recent week
+    # - time in hypo was at most 4% over the most recent week
     # - time in range was at least 65% over the most recent week
     # - time worn was at least 50% over the most recent week
     review[(data['in_range (%)'] - data['in_range_previous_week (%)'] >= - 0.15) &
            (data['extreme_hypo (%)'] <= 0.01) &
-           (data['hypo (%)'] <= 0.03) &
+           (data['hypo (%)'] <= 0.04) &
            (data['in_range (%)'] >= 0.65) &
            (data['device_worn (%)'] >= 0.5)] = '(6) No alerts'
     
@@ -200,9 +200,9 @@ def prioritize_patients(data):
            (data['device_worn (%)'] > 0.5)] = '(3) Large drop in TIR'
     
     # Group 2: High lows.
-    # - time in hypo was more than 3% over the most recent week
+    # - time in hypo was more than 4% over the most recent week
     # - time worn was more than 50% over the most recent week
-    review[(data['hypo (%)'] > 0.03) &
+    review[(data['hypo (%)'] > 0.04) &
            (data['device_worn (%)'] > 0.5)] = '(2) High lows'
     
     # Group 1: High extreme lows.
