@@ -43,8 +43,8 @@ def update_bar_chart(data,
     style: dict.
         Bar chart style dictionary.
     
-    changed_id: list of str.
-        List of inputs that triggered the callback.
+    changed_id: str.
+        Input that triggered the callback.
 
     Returns:
     ----------------------------------
@@ -53,7 +53,7 @@ def update_bar_chart(data,
     '''
 
     # If the filters have changed, draw a new bar chart.
-    if 'bar-chart.clickData' not in changed_id:
+    if changed_id != 'bar-chart.clickData':
     
         # Copy the data.
         data = data.copy()

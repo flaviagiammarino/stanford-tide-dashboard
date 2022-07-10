@@ -128,7 +128,7 @@ def update_dashboard(populations,
     # Create a copy of the patients' dataset.
     data = df.copy()
     
-    # Check which inputs have triggered the callback.
+    # Check which input has triggered the callback.
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     
     # Update the bar chart.
@@ -144,7 +144,7 @@ def update_dashboard(populations,
                                changed_id)
 
     # If a patient has been selected, use only the data for this patient.
-    if 'bar-chart.clickData' in changed_id:
+    if changed_id == 'bar-chart.clickData':
         
         # Extract the id of the selected patient.
         id = click_data['points'][0]['customdata']
