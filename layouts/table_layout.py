@@ -219,7 +219,7 @@ first_row = [html.Tr(
                 ),
 
                 html.P(
-                    children='mg/d',
+                    children='mg/dL',
                     style={
                         'margin': '0vw 0vw 0.5vw 0vw',
                         'padding': '0'
